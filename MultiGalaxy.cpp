@@ -35,7 +35,7 @@ using namespace arma;
 
 // create maximum object with 15 parameters
 MultiGalaxy::MultiGalaxy() 
-:objects(15, 100, false, MyConditionalPriorMultiGalaxy(
+:objects(15, 10, false, MyConditionalPriorMultiGalaxy(
       Data::get_instance().get_lower_limit(),Data::get_instance().get_upper_limit() ),  PriorType::log_uniform)
 ,image(Data::get_instance().get_ni(),vector<long double>(Data::get_instance().get_nj() ))
 {
@@ -90,10 +90,13 @@ MultiGalaxy::MultiGalaxy()
 
 void MultiGalaxy::from_prior(RNG& rng)
 {
-   objects.from_prior(rng);
+  do
+  {
+     objects.from_prior(rng);
+  }while (objects.get_components().size() == 0);
    calculate_image();
-   sigma = exp(log(1.) + log(1E6)*rng.rand());
-   calculate_image();
+//   sigma = exp(log(1.) + log(1E6)*rng.rand());
+ //  calculate_image();
    //     std::cout << " Finished image " << std::endl; 
 } // End-from prior
 
@@ -105,7 +108,14 @@ double MultiGalaxy::perturb(RNG& rng)
 	if(rng.rand() <= 0.75)
 	{
 		logH += objects.perturb(rng);
-		calculate_image();
+                if (objects.get_components().size() == 0)
+                {
+                    return -std::numeric_limits<double>::max();
+                }
+                else
+                {
+		  calculate_image();
+                }
 	}
 	else
 	{
@@ -114,6 +124,7 @@ double MultiGalaxy::perturb(RNG& rng)
 		sigma = mod(sigma - log(1.), log(1E6)) + log(1.);
 		sigma = exp(sigma);
 	}
+             
 
 	return logH;
 }
@@ -175,13 +186,18 @@ void MultiGalaxy::print(std::ostream& out) const
 
 void MultiGalaxy::calculate_image()
 {
+        std::cout << std::endl << "Started calculate image" <<   std::endl; 
         global_index++;
         double x, y;
 	// Get coordinatesfrom data and create an empty image
         int ni= Data::get_instance().get_ni();
         int nj= Data::get_instance().get_nj();
 	image.assign(Data::get_instance().get_ni(), vector<long double>(Data::get_instance().get_nj(), 0.));
-	
+        vector<string> titels; 
+        titels.assign(15, " ");
+        titels[0] = "x"; titels[1] = "y";  titels[2] = "mag"; titels[3] = "Re"; titels[4] = "n"; titels[5] = "q";  titels[6] = "theta"; titels[7] = "boxi";
+        titels[8] = "mag-bar"; titels[9] = "Rout";  titels[10] = "a"; titels[11] = "b"; titels[12] = "q-bar"; titels[13] = "theta-bar";  titels[14] = "box-bar"; 
+//	titels = ["x", "y", "mag", "re", "n", "q", "theta", "boxi", "mag-bar", "Rour","a","b" "q-bar", "theta-bar", "box-bar"]
 
 
         bool update = objects.get_removed().size() == 0;
@@ -195,8 +211,18 @@ void MultiGalaxy::calculate_image()
 			vector<long double>(Data::get_instance().get_nj(), 0.));
 	}
 
+        std::cout << std::endl << "Print values in calculate image " << std::endl; 
+        std::cout << std::endl << "Dimensions: " << std::endl << "Objects:" << components.size() << " Parameters:" << components[0].size() << std::endl; 
+
+
         for(size_t k=0; k<components.size(); ++k)
 	{
+
+            for(size_t i=0; i<components[0].size(); i++)
+            {  
+                     std::cout << titels[i] << "=" << components[k][i] << " ; ";
+            }
+            std::cout << std::endl;
 
            profit::Model *model = new profit::Model();
 
@@ -216,7 +242,6 @@ void MultiGalaxy::calculate_image()
            sp->axrat = components[k][5];
            sp->ang = components[k][6];
            sp->box = components[k][7];
-
 
            profit::Profile *ferrer_profile = model->add_profile("ferrer");
            profit::FerrerProfile *fp = static_cast<profit::FerrerProfile*>(ferrer_profile);
@@ -251,10 +276,11 @@ void MultiGalaxy::calculate_image()
 
        } // end-for
         blur_image2(image);
-        if (global_index % 500 == 0)
+        if (global_index % 250 == 0)
         {
              writefile(image); 
         } 
+        std::cout << std::endl << "End calculate image " <<   std::endl; 
 } // End-calculate image 
 
 

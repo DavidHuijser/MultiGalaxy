@@ -1,6 +1,7 @@
 #include "MyConditionalPriorMultiGalaxy.h"
 #include "DNest4/code/DNest4.h"
 #include <cmath>
+#include <vector>
 
 using namespace DNest4;
 
@@ -22,6 +23,7 @@ std::vector<double> lower_limit_, std::vector<double> upper_limit_)
 // lower_limit[13](lower_limit[13]),upper_limit[13](upper_limit[13]),  
 // lower_limit[14](lower_limit[14]),upper_limit[14](upper_limit[14]))  
 {
+// std::cout << std::endl << "Make Conditional Prior object" <<   std::endl; 
  lower_limit.assign(lower_limit_.size(),0);
  upper_limit.assign(upper_limit_.size(),0);
 
@@ -30,15 +32,16 @@ std::vector<double> lower_limit_, std::vector<double> upper_limit_)
     lower_limit[i] =  lower_limit_[i];
     upper_limit[i] =  upper_limit_[i];
  }
+// std::cout << std::endl << "Finished init Conditional Prior object" <<   std::endl; 
 }
 
 
 // Draw Hyper-Parameters from prior
 void MyConditionalPriorMultiGalaxy::from_prior(RNG& rng)
 {
-        hyper_scale =  3 + 6*rng.rand();                    // scale centre is at about 5, 3-9 
+        hyper_scale =  5 + 3*rng.randh();                      // scale centred at about 5 
         hyper_location = 20 + 10*rng.rand();                  // location centre is at about 25, 20-30 
-
+        wrap(hyper_scale, 1e-2, 10);  
 //	fluxlim = exp(log(fluxlim_min) + log(fluxlim_max/fluxlim_min)*rng.rand());
 //	gamma = rng.rand();
 
@@ -50,10 +53,12 @@ void MyConditionalPriorMultiGalaxy::from_prior(RNG& rng)
 
 //	b2 = rng.rand();
 //	a2 = rng.rand()*b2;
+        std::cout << std::endl << "Just generated hyper priors: " <<  hyper_scale <<  " and  "  << hyper_location <<   std::endl; 
 }
 
 double MyConditionalPriorMultiGalaxy::perturb_hyperparameters(RNG& rng)
 {
+        std::cout << std::endl << "Start perturb" <<   std::endl; 
 	double logH = 0.;
         // choose which hyper parameter to change 
 	int which = rng.rand_int(2);
@@ -70,6 +75,7 @@ double MyConditionalPriorMultiGalaxy::perturb_hyperparameters(RNG& rng)
 	else if(which == 1)
 	{
                 hyper_scale += 5*rng.randh();
+                wrap(hyper_scale, 1e-2, 10);         // LaPlace can have a negative width 
 //		gamma += rng.randh();
 //		gamma = mod(gamma, 1.);
 	}
@@ -110,7 +116,7 @@ double MyConditionalPriorMultiGalaxy::perturb_hyperparameters(RNG& rng)
 //		a2 += b2*rng.randh();
 //		a2 = mod(a2, b2);
 //	}
-
+        std::cout << std::endl << "End perturb" <<   std::endl; 
 	return logH;
 }
 
@@ -118,6 +124,9 @@ double MyConditionalPriorMultiGalaxy::perturb_hyperparameters(RNG& rng)
 
 double MyConditionalPriorMultiGalaxy::log_pdf(const std::vector<double>& vec) const
 {
+        std::cout << std::endl << "Start  logpdf" <<   std::endl; 
+        std::cout << "Vecsize " << vec.size(); 
+
         // if outside of prior range log prior = -infty 
 	if(
              vec[0] < lower_limit[0] || vec[0] > upper_limit[0] ||   // x
@@ -154,13 +163,34 @@ double MyConditionalPriorMultiGalaxy::log_pdf(const std::vector<double>& vec) co
 //			- (alpha_radius + 1.)*log(vec[3]);
 //	logp += -log(b1 - a1) - log(b2 - a2);
 
+      std::cout << std::endl << "Print values in log_pdf" << std::endl; 
+      for(size_t i=0; i<vec.size(); i++)
+      {  
+        std::cout << vec[i] << " ";
+      }
+
+
 	return logp;
 }
 
 void MyConditionalPriorMultiGalaxy::from_uniform(std::vector<double>& vec) const
 {  
+   std::cout << std::endl << "Start from_unif" <<   std::endl; 
    // Laplace distribution
     Laplace l1(hyper_location, hyper_scale);
+
+    std::vector<string> titels; 
+    titels.assign(15, " ");
+    titels[0] = "x"; titels[1] = "y";  titels[2] = "mag"; titels[3] = "Re"; titels[4] = "n"; titels[5] = "q";  titels[6] = "theta"; titels[7] = "boxi";
+    titels[8] = "mag-bar"; titels[9] = "Rout";  titels[10] = "a"; titels[11] = "b"; titels[12] = "q-bar"; titels[13] = "theta-bar";  titels[14] = "box-bar"; 
+
+     for(size_t i=0; i<vec.size()-1; i++)
+    {  
+                     std::cout << titels[i] << "=" << lower_limit[i]  << " < " <<  vec[i] << " <  " << upper_limit[i] << std::endl;
+    }
+
+
+
 
    for(size_t i=0; i<vec.size(); i++)
    {  
@@ -173,6 +203,9 @@ void MyConditionalPriorMultiGalaxy::from_uniform(std::vector<double>& vec) const
             vec[i] = l1.cdf_inverse(vec[i]);
        }
    } // end-for
+
+  
+  std::cout << std::endl << "End from_unif" <<   std::endl; 
 }
 
 
@@ -188,6 +221,7 @@ void MyConditionalPriorMultiGalaxy::from_uniform(std::vector<double>& vec) const
 
 void MyConditionalPriorMultiGalaxy::to_uniform(std::vector<double>& vec) const
 {
+    std::cout << std::endl << "Start to_unif" <<   std::endl; 
    // Laplace distribution
     Laplace l1(hyper_location, hyper_scale);
    for(size_t i=0; i<vec.size(); i++)
@@ -202,6 +236,7 @@ void MyConditionalPriorMultiGalaxy::to_uniform(std::vector<double>& vec) const
        }
 
    } // end-for
+    std::cout << std::endl << "End to_unif" <<   std::endl; 
 }
 
 

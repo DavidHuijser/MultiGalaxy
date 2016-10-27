@@ -44,7 +44,7 @@ class MultiGalaxy
 
 	public:
 		MultiGalaxy();
-                int global_index;
+                 int global_index;
 		// Generate the point from the prior
 		void from_prior(DNest4::RNG& rng);
 

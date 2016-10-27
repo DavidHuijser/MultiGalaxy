@@ -19,7 +19,7 @@ class MyConditionalPriorMultiGalaxy:public DNest4::ConditionalPrior
 {
 	private:
 		// Limits
-               std::vector <double> upper_limit;
+              std::vector <double> upper_limit;
                std::vector<double> lower_limit;                
                // Hyper-parameters
                 double hyper_location;

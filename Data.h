@@ -37,12 +37,11 @@ class Data
                 double min_mag; 
                 double magzp;
 
-                void set_upper_limit();
-                void set_lower_limit();
-   
-                std::vector<double>  lower_limit;
-                std::vector<double>   upper_limit;
-//		void compute_ray_grid();
+		void set_upper_limit();
+		void set_lower_limit();
+
+	        std::vector<double> lower_limit;
+	 	std::vector<double> upper_limit;
 
 	public:
 		Data();
