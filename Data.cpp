@@ -13,8 +13,8 @@ Data Data::instance;
 
 Data::Data()
 {
- set_lower_limit();
- set_upper_limit();
+// set_lower_limit();
+// set_upper_limit();
 }
 
 
@@ -161,52 +161,52 @@ void Data::load(const char* metadata_file, const char* image_file, const char* s
 
 
 
-// A function to set the limit for the flat prior
-void Data::set_lower_limit()
-{ 
-    double delta = 1e-2;
-    lower_limit.assign(15,0);
-    lower_limit[0] = 0; //x
-    lower_limit[1] = 0; //y
-    lower_limit[2] = Data::get_instance().get_magzp() - 18; // I
-    lower_limit[3] = 1;  // R
-    lower_limit[4] = 0.5; // n 
-    lower_limit[5] = 0;  // q
-    lower_limit[6] = 0;    // theta
-    lower_limit[7] = -1.0;  // boxi
+//// A function to set the limit for the flat prior
+//void Data::set_lower_limit()
+//{ 
+//    double delta = 1e-2;
+//    lower_limit.assign(15,0);
+//    lower_limit[0] = 0; //x
+//    lower_limit[1] = 0; //y
+//    lower_limit[2] = Data::get_instance().get_magzp() - 18; // I
+//    lower_limit[3] = 1;  // R
+//    lower_limit[4] = 0.5; // n 
+//    lower_limit[5] = 0;  // q
+//    lower_limit[6] = 0;    // theta
+//    lower_limit[7] = -1.0;  // boxi
 
-    lower_limit[8] = Data::get_instance().get_magzp() - 18; // I
-    lower_limit[9] = delta;  // rout
-    lower_limit[10] =  delta; // a                      // alpha [ 0, 10]     (Tayuen, Kim paper 2014) 
-    lower_limit[11] =  delta;   // b                    // beta [0 ,2] 
-    lower_limit[12] = 0;    // q
-    lower_limit[13] = 0 ;  // theta  
-    lower_limit[14] = -1.0;  // boxi
-}
+//    lower_limit[8] = Data::get_instance().get_magzp() - 18; // I
+//    lower_limit[9] = delta;  // rout
+//    lower_limit[10] =  delta; // a                      // alpha [ 0, 10]     (Tayuen, Kim paper 2014) 
+//    lower_limit[11] =  delta;   // b                    // beta [0 ,2] 
+//    lower_limit[12] = 0;    // q
+//    lower_limit[13] = 0 ;  // theta  
+//    lower_limit[14] = -1.0;  // boxi
+//}
 
 
-// A function to set the limit for the flat prior
-void Data::set_upper_limit()
-{ 
-    double delta = 1e-2;
-    upper_limit.assign(15,0);
-    upper_limit[0] = 100; //x
-    upper_limit[1] = 100; //y
-    upper_limit[2] = Data::get_instance().get_magzp(); // I
-    upper_limit[3] = 50;  // R
-    upper_limit[4] = 10; // n 
-    upper_limit[5] = 1;  // q
-    upper_limit[6] = 180;    // theta
-    upper_limit[7] = 1.0;  // boxi
+//// A function to set the limit for the flat prior
+//void Data::set_upper_limit()
+//{ 
+//    double delta = 1e-2;
+//    upper_limit.assign(15,0);
+//    upper_limit[0] = 100; //x
+//    upper_limit[1] = 100; //y
+//    upper_limit[2] = Data::get_instance().get_magzp(); // I
+//    upper_limit[3] = 50;  // R
+//    upper_limit[4] = 10; // n 
+//    upper_limit[5] = 1;  // q
+//    upper_limit[6] = 180;    // theta
+//    upper_limit[7] = 1.0;  // boxi
 
-    upper_limit[8] = Data::get_instance().get_magzp(); // I
-    upper_limit[9] = 3;  // rout
-    upper_limit[10] = 10; // a
-    upper_limit[11] = 2.0 - delta;   // b
-    upper_limit[12] = 1;    // q
-    upper_limit[13] = 180 ;  // theta  
-    upper_limit[14] = 1.0;  // boxi
-}
+//    upper_limit[8] = Data::get_instance().get_magzp(); // I
+//    upper_limit[9] = 3;  // rout
+//    upper_limit[10] = 10; // a
+//    upper_limit[11] = 2.0 - delta;   // b
+//    upper_limit[12] = 1;    // q
+//    upper_limit[13] = 180 ;  // theta  
+//    upper_limit[14] = 1.0;  // boxi
+//}
 
 
 //void Data::compute_ray_grid()
