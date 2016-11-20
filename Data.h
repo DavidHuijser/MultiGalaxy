@@ -37,11 +37,11 @@ class Data
                 double min_mag; 
                 double magzp;
 
-		void set_upper_limit();
-		void set_lower_limit();
+	//	void set_upper_limit();
+	////	void set_lower_limit();
 
-	        std::vector<double> lower_limit;
-	 	std::vector<double> upper_limit;
+	      //  std::vector<double> lower_limit;
+	 	//std::vector<double> upper_limit;
 
 	public:
 		Data();
@@ -51,8 +51,8 @@ class Data
 		int get_ni() const { return ni; }
 		int get_nj() const { return nj; }
 
-		std::vector<double> get_upper_limit() const { return upper_limit; }
-		std::vector<double> get_lower_limit() const { return lower_limit; }
+		//std::vector<double> get_upper_limit() const { return upper_limit; }
+		//std::vector<double> get_lower_limit() const { return lower_limit; }
 
 		double get_x_min() const { return x_min; }
 		double get_x_max() const { return x_max; }

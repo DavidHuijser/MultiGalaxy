@@ -19,8 +19,8 @@ class MyConditionalPriorMultiGalaxy:public DNest4::ConditionalPrior
 {
 	private:
 		// Limits
-              std::vector <double> upper_limit;
-               std::vector<double> lower_limit;                
+                std::vector <double> upper_limit;           
+                std::vector <double> lower_limit ;                
                // Hyper-parameters
                 double hyper_location;
                 double hyper_scale;
@@ -43,15 +43,19 @@ class MyConditionalPriorMultiGalaxy:public DNest4::ConditionalPrior
           
 //		double a1, b1;
 //		double a2, b2;
-
+		void set_upper_limit();
+		void set_lower_limit();
+                int ni, nj;
 
 		double perturb_hyperparameters(DNest4::RNG& rng);
+                bool in_valid_range;
+
 
 	public:
-		MyConditionalPriorMultiGalaxy(std::vector<double> lower_limit, std::vector<double> upper_limit);
-
+//		MyConditionalPriorMultiGalaxy(std::vector<double> lower_limit, std::vector<double> upper_limit);
+		MyConditionalPriorMultiGalaxy(double ni, double nj);
+ 
 		void from_prior(DNest4::RNG& rng);
-
 		double log_pdf(const std::vector<double>& vec) const;
 		void from_uniform(std::vector<double>& vec) const;
 		void to_uniform(std::vector<double>& vec) const;

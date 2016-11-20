@@ -40,6 +40,7 @@ class MultiGalaxy
                // FFT of the PSF
                 arma::cx_mat fft_of_psf;
                 bool fft_ready;
+                int ni, nj;
                 int Ni, Nj;
 
 	public:
@@ -64,9 +65,11 @@ class MultiGalaxy
                 void set_limit(); 
 
 //                // Limits
-//                std::vector<double> upper_limit;
-//                std::vector<double> lower_limit;
-// 
+                std::vector<double> upper_limit;
+                std::vector<double> lower_limit;
+
+                bool check_in_range();
+
 	        std::string IntToStr(int n);
            
                 // PSF
